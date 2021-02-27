@@ -1,0 +1,168 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+ 	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+ 	http://www.springframework.org/schema/mvc
+ 	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+ 	http://www.springframework.org/schema/context
+ 	http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+ 	http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx.xsd
+   ">
+
+	<!-- Aggiungo il supporto ai component - scanning -->
+
+	<context:component-scan
+		base-package="controller" />
+	<context:component-scan base-package="service" />
+	<context:component-scan base-package="dao" />
+
+
+	<!-- Step 2: Esempio per l utilizzo dei Validatori -->
+
+	<bean id="mioValidatore"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	<mvc:annotation-driven validator="mioValidatore" />
+
+
+	<!-- Step 3: Define Database DataSource / connection pool -->
+	 <!-- Configuring the JDBC connection-->
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/universitadb?useSSL=false" />
+		<property name="username" value="root" />
+		<property name="password" value="12345678" />
+	</bean>
+
+	<!-- dentro l’oggetto hibernate4AnnotatedSessionFactory, andiamo a definire: 
+		il data source la lista delle classi che sono annotate con @entity (gli passiamo 
+		il package in cui metteremo le nostre classi) una serie di valori associati 
+		al session factory, che venivano memorizzati nel file hibernate.cfx.xml (come 
+		ad esempio il dialect, hbm2ddl ecc) Hbm2ddl.auto permette di settare la creazione 
+		e l’aggiornamento del db. Nello specifico, indicando update, a l primo avvio 
+		ti crea le tabelle, ai successivi avvii esegue solo un aggiornamento sulle 
+		tabelle. Indicando create, ricrea ad ogni avvio le tabelle. In aggiunta si 
+		potrebbe indicare anche la seguente riga: validate Convalida lo shema solo 
+		se le tabelle sono state create, differentemente restituisce error:- Table 
+		not found: <prop key=”hibernate.hbm2ddl.auto”>create</prop> da mettere sotto 
+		show_Sql -->
+
+   <!-- Configuring the Hibernate4 Session Factory Bean -->
+
+	<bean id="hibernate4AnnotatedSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="model" />
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+<!-- 				<prop key="hibernate.connection.autocommit">true</prop> -->
+
+			</props>
+		</property>
+	</bean>
+
+	<!-- Step 5: Setup Hibernate transaction manager -->
+
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+<!-- 	<mvc:interceptors> -->
+<!-- 		<bean class="interceptors.LoginInterceptor" /> -->
+<!-- 	</mvc:interceptors> -->
+
+	<!-- Step 6: Definisco tutti i miei Bean tutti i miei oggetti Dao... al 
+		posto di usare le notazioni che sarebbero state più rapide -->
+
+	<bean id="studenteDao" class="dao.impl.StudenteDImpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="IStudenteService" class="service.impl.StudenteSImpl">
+		<property name="studenteDao" ref="studenteDao"></property>
+	</bean>
+
+	<bean id="docenteDao" class="dao.impl.DocenteDimpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="IDocenteService" class="service.impl.DocenteSimpl">
+		<property name="docenteDao" ref="docenteDao"></property>
+	</bean>
+
+	<bean id="frequenzaDao" class="dao.impl.FrequenzaDImpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="IFrequenzaService" class="service.impl.FrequenzaSimpl">
+		<property name="frequenzaDao" ref="frequenzaDao"></property>
+	</bean>
+
+	<bean id="corsiDao" class="dao.impl.CorsiDImpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="ICorsiService" class="service.impl.CorsiSimpl">
+		<property name="corsiDao" ref="corsiDao"></property>
+	</bean>
+
+
+	<bean id="userDao" class="dao.impl.UserDimpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="IUserService" class="service.impl.UserSimpl">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+
+	<bean id="rolesDao" class="dao.impl.RolesDimpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="IRolesService" class="service.impl.RolesSimpl">
+		<property name="rolesDao" ref="rolesDao"></property>
+	</bean>
+	
+		<bean id="dettaglioDao" class="dao.impl.DettaglioDimpl">
+		<property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory"></property>
+	</bean>
+	<bean id="IDettaglioService" class="service.impl.DettaglioSimpl">
+		<property name="dettaglioDao" ref="dettaglioDao"></property>
+	</bean>
+
+
+
+	<!-- Define Spring MVC view resolver l caso più classico di ViewResolver è rappresentato dall’InternalResourceViewResolver che permette di identificare
+	 una View sulla base di risorse interne al progetto come ad esempio JSP-->
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/views/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+
+	<!-- Add support for reading web resources: css, images, js, etc ... -->
+	<mvc:resources location="/resources/"
+		mapping="/resources/**"></mvc:resources>
+
+</beans>

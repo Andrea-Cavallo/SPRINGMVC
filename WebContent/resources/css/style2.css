@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+@import
+	url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap')
+	;
+
+* {
+	margin: 0;
+	padding: 0;
+	/*padding è la distanza tra il testo ed il bordo di un contenitore. Una sorta di margine tra il contenuto*/
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+}
+.container {
+  position: absolute;
+  width: 100%;
+  background-color: #fff;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+body {
+	display: flex;
+	/*The Flexible Box Layout Module, makes it easier to design flexible responsive layout structure without using float or positioning.*/
+	justify-content: right;
+	/*The center value aligns the flex items at the center of the container*/
+	align-items: right;
+	min-height: 50vh;
+	/*The min-height property in CSS is used to set the minimum height of a specified element. The min-height property always overrides both height and max-height. Authors may use any of the length values as long as they are a positive value.*/
+	overflow: hidden; /*mi nasconde la barra sulla destra di scorrimento*/
+}
+
+table {   
+	border-collapse:collapse;
+	border-bottom:1px solid gray;
+	font-family: 'Poppins', sans-serif;
+	width:99%;
+}
+ 
+th {
+	border-bottom:1px solid gray;
+	background:linear-gradient(-45deg, #4481eb 0%, #04befe 100%);
+	padding:20px;
+	color: #FFFFFF;
+}
+
+tr {
+	border-top:2px solid gray;
+	text-align:center;	
+}
+ 
+tr:nth-child(even) {background: #FFFFFF}
+tr:nth-child(odd) {background: #BBBBBB}	
+ 
+#wrapper {width: 80%; margin-top: 0px; }
+#header {width: 80%; background:linear-gradient(-45deg, #4481eb 0%, #04befe 100%); margin-top: 0px; padding:15px 0px 15px 15px;}
+#header h2 {width: 100%; margin:auto; color: #FFFFFF;}
+#container {width: 500%; margin:auto}
+#container h3 {color: #000;}
+#container #content {margin-top: 20px;}
+
+.add-button {
+	border: 1px solid #666; 
+	border-radius: 5px; 
+	padding: 4px; 
+	font-size: 12px;
+	font-weight: bold;
+	width: 120px; 
+	padding: 5px 10px; 
+	
+	margin-bottom: 15px;
+	background: #cccccc;
+}
